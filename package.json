@@ -1,43 +1,55 @@
 {
   "name": "jirareport-web",
-  "version": "0.1.0",
+  "version": "0.2.0",
+  "private": true,
   "dependencies": {
-    "@fortawesome/fontawesome": "^1.1.8",
-    "@fortawesome/fontawesome-svg-core": "^1.2.17",
-    "@fortawesome/free-solid-svg-icons": "^5.8.1",
-    "@fortawesome/react-fontawesome": "^0.1.4",
-    "axios": "^0.18.0",
-    "chart.js": "^2.8.0",
-    "chartjs-plugin-datalabels": "^0.6.0",
-    "classnames": "^2.2.6",
+    "@fortawesome/fontawesome-svg-core": "^6.5.1",
+    "@fortawesome/free-solid-svg-icons": "^6.5.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@reduxjs/toolkit": "^2.0.1",
+    "axios": "^1.6.0",
+    "chart.js": "^4.4.0",
+    "chartjs-adapter-date-fns": "^3.0.0",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "classnames": "^2.3.2",
+    "date-fns": "^2.30.0",
     "materialize-css": "^1.0.0",
-    "moment": "^2.24.0",
-    "node-sass": "^4.11.0",
-    "prop-types": "^15.7.2",
-    "query-string": "^6.4.2",
-    "react": "^16.8.6",
-    "react-csv": "^1.1.1",
-    "react-dates": "^20.1.0",
-    "react-dom": "^16.8.6",
-    "react-modal": "^3.8.1",
-    "react-redux": "^7.0.1",
-    "react-router-dom": "^5.0.0",
-    "react-scripts": "2.1.8",
-    "react-scroll-sync": "^0.7.0",
-    "react-select": "^2.4.3",
-    "react-window": "^1.8.1",
-    "redux": "^4.0.1",
-    "sweetalert": "^2.1.2",
-    "sweetalert2": "^8.10.7"
+    "moment": "^2.30.1",
+    "prop-types": "^15.8.1",
+    "query-string": "^8.1.0",
+    "react": "^18.2.0",
+    "react-csv": "^2.2.2",
+    "react-datepicker": "^8.6.0",
+    "react-dom": "^18.2.0",
+    "react-modal": "^3.16.1",
+    "react-redux": "^9.0.4",
+    "react-router-dom": "^6.20.0",
+    "react-scripts": "5.0.1",
+    "react-scroll-sync": "^0.11.2",
+    "react-select": "^5.8.0",
+    "react-window": "^1.8.8",
+    "redux": "^5.0.0",
+    "sweetalert2": "^11.9.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.1.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^14.5.1",
+    "sass": "^1.69.5",
+    "web-vitals": "^3.5.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "analyze": "npm run build && npx source-map-explorer 'build/static/js/*.js'"
   },
   "eslintConfig": {
-    "extends": "react-app",
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ],
     "rules": {
       "semi": "error",
       "no-unused-vars": "error",
@@ -47,10 +59,16 @@
       "no-extra-boolean-cast": "error"
     }
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }

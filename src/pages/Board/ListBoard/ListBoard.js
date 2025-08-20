@@ -1,5 +1,6 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
+import React, { useState, useEffect, useCallback } from "react";
+import { useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { FilterService, HttpService } from "services";
 import queryString from "query-string";
@@ -9,55 +10,48 @@ import { Button, Col, InputField, Link, Pagination, Panel, Preloader, Row, Selec
 import CardBoard from "./CardBoard/CardBoard";
 import EmptyBoardAlert from "./EmptyBoardAlert/EmptyBoardAlert";
 
-class ListBoard extends Component {
-    state = {
-        boards: {
-            content: []
-        },
-        filter: {
-            name: "",
-            owner: ""
-        },
-        owners: [],
-        page: 0,
-        isLoading: true
-    };
+const ListBoard = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const userConfig = useSelector(state => state.auth.userConfig);
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.props.location.search !== prevProps.location.search) {
-            this.retrieveBoardsByQueryParams();
-        }
-    }
+    const [boards, setBoards] = useState({
+        content: []
+    });
+    const [filter, setFilter] = useState({
+        name: "",
+        owner: ""
+    });
+    const [owners, setOwners] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    componentDidMount() {
-        this.retrieveOwners();
-        this.retrieveBoardsByQueryParams();
-    }
+    const retrieveBoards = useCallback(async (query) => {
+        setIsLoading(true);
 
-    retrieveBoardsByQueryParams = () => {
-        const { name, owner, page } = queryString.parse(this.props.location.search);
+        const { data } = await HttpService.get("/boards", { params: query });
+        setBoards(data);
+        setIsLoading(false);
+    }, []);
 
-        const filter = {
+    const retrieveBoardsByQueryParams = useCallback(() => {
+        const { name, owner, page: queryPage } = queryString.parse(location.search);
+
+        const newFilter = {
             name: name || "",
             owner: owner || ""
         };
 
-        this.setState({
-            filter: {
-                ...filter
-            },
-            page
-        });
+        setFilter(newFilter);
 
-        this.retrieveBoards(FilterService.cleanFilter({
-            ...filter,
-            page
+        retrieveBoards(FilterService.cleanFilter({
+            ...newFilter,
+            page: queryPage
         }));
-    };
+    }, [location.search, retrieveBoards]);
 
-    retrieveOwners = async () => {
+    const retrieveOwners = useCallback(async () => {
         const { data } = await HttpService.get("/boards/owners");
-        const owners = [
+        const ownersData = [
             {
                 label: "Todos",
                 value: "all"
@@ -68,115 +62,99 @@ class ListBoard extends Component {
             }))
         ];
 
-        this.setState({
-            owners
-        });
-    };
+        setOwners(ownersData);
+    }, []);
 
-    handleFilter = event => {
+    useEffect(() => {
+        retrieveOwners();
+        retrieveBoardsByQueryParams();
+    }, [retrieveOwners, retrieveBoardsByQueryParams]);
+
+    useEffect(() => {
+        retrieveBoardsByQueryParams();
+    }, [location.search, retrieveBoardsByQueryParams]);
+
+    const handleFilter = (event) => {
         event.preventDefault();
 
-        const query = FilterService.cleanFilter(this.state.filter);
+        const query = FilterService.cleanFilter(filter);
 
-        this.updateLocationSearch(query);
-        this.retrieveBoards(query);
+        updateLocationSearch(query);
+        retrieveBoards(query);
     };
 
-    goToPage = page => {
+    const goToPage = (pageNumber) => {
         const query = FilterService.cleanFilter({
-            ...this.state.filter,
-            page
+            ...filter,
+            page: pageNumber
         });
 
-        this.updateLocationSearch(query);
-        this.retrieveBoards(query);
+        updateLocationSearch(query);
+        retrieveBoards(query);
     };
 
-    retrieveBoards = async query => {
-        this.setState({
-            isLoading: true
-        });
-
-        const { data } = await HttpService.get("/boards", { params: query });
-        this.setState({
-            boards: data,
-            isLoading: false
-        });
+    const changeFilterValue = (target, value) => {
+        setFilter(prevFilter => ({
+            ...prevFilter,
+            [target]: value
+        }));
     };
 
-    changeFilterValue = (target, value) => {
-        this.setState({
-            filter: {
-                ...this.state.filter,
-                [target]: value
-            }
-        });
-    };
-
-    updateLocationSearch = query => {
-        this.props.history.push({
+    const updateLocationSearch = (query) => {
+        navigate({
             pathname: "/boards",
             search: queryString.stringify(query)
         });
     };
 
-    render() {
-        const { userConfig } = this.props;
-        const { filter, owners, boards, isLoading } = this.state;
+    return <Row>
+        <Col s={12}>
+            <PageHeader title="Boards" action={
+                <Link to="/boards/new">Novo board</Link>
+            }/>
+        </Col>
 
-        return <Row>
+        <Col s={12}>
+            <Panel collapsible defaultClose title="Filtro" actions={
+                <Button type="submit" onClick={handleFilter}>
+                    Filtrar
+                </Button>
+            }>
+                <Row>
+                    <InputField s={12} l={6}
+                                name="name"
+                                onChange={e => changeFilterValue("name", e.target.value)}
+                                value={filter.name}
+                                label="Nome"/>
+
+                    <Col s={12} l={6}>
+                        <Select withoutWrapper
+                                options={owners}
+                                label="Dono"
+                                onChange={selected => changeFilterValue("owner", (selected || {}).value)}
+                                value={filter.owner || userConfig?.username}/>
+                    </Col>
+                </Row>
+            </Panel>
+        </Col>
+
+        {isLoading ? <Col s={12}>
+            <Preloader/>
+        </Col> : <>
+            {boards.content.map(board =>
+                <CardBoard key={board.id}
+                           board={board}
+                           refreshBoards={() => retrieveBoardsByQueryParams()}/>
+            )}
+
+            {boards.numberOfElements === 0 && <EmptyBoardAlert/>}
+
             <Col s={12}>
-                <PageHeader title="Boards" action={
-                    <Link to="/boards/new">Novo board</Link>
-                }/>
+                <Pagination data={boards} goToPage={goToPage}/>
             </Col>
+        </>}
+    </Row>;
 
-            <Col s={12}>
-                <Panel collapsible defaultClose title="Filtro" actions={
-                    <Button type="submit" onClick={this.handleFilter}>
-                        Filtrar
-                    </Button>
-                }>
-                    <Row>
-                        <InputField s={12} l={6}
-                                    name="name"
-                                    onChange={e => this.changeFilterValue("name", e.target.value)}
-                                    value={filter.name}
-                                    label="Nome"/>
+};
 
-                        <Col s={12} l={6}>
-                            <Select withoutWrapper
-                                    options={owners}
-                                    label="Dono"
-                                    onChange={selected => this.changeFilterValue("owner", (selected || {}).value)}
-                                    value={filter.owner || userConfig.username}/>
-                        </Col>
-                    </Row>
-                </Panel>
-            </Col>
-
-            {isLoading ? <Col s={12}>
-                <Preloader/>
-            </Col> : <>
-                {boards.content.map(board =>
-                    <CardBoard key={board.id}
-                               board={board}
-                               refreshBoards={() => this.retrieveBoardsByQueryParams()}/>
-                )}
-
-                {boards.numberOfElements === 0 && <EmptyBoardAlert/>}
-
-                <Col s={12}>
-                    <Pagination data={boards} goToPage={this.goToPage}/>
-                </Col>
-            </>}
-        </Row>;
-    }
-
-}
-
-const mapStateToProps = state => ({
-    ...state.auth
-});
-
-export default connect(mapStateToProps,)(ListBoard);
+export default ListBoard;

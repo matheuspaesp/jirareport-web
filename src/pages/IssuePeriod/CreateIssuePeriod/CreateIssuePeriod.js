@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import withRouter from "../../../utils/withRouter";
 
 import { IssuePeriodService } from "services";
 import moment from "moment";
@@ -184,4 +185,4 @@ class CreateIssuePeriod extends Component {
     }
 }
 
-export default CreateIssuePeriod;
+export default withRouter(CreateIssuePeriod);

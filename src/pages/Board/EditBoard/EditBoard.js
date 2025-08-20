@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import withRouter from "../../../utils/withRouter";
 
 import { HttpService, NotificationService } from "services";
 
@@ -129,4 +130,4 @@ class EditBoard extends Component {
     }
 }
 
-export default EditBoard;
+export default withRouter(EditBoard);

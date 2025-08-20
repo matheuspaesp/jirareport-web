@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import withRouter from "../../../utils/withRouter";
 
 import { AlertService, HttpService, NotificationService } from "services";
 
@@ -103,4 +104,4 @@ class ListLeadTimeConfigs extends Component {
     }
 }
 
-export default ListLeadTimeConfigs;
+export default withRouter(ListLeadTimeConfigs);

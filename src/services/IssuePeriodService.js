@@ -1,11 +1,11 @@
 import { HttpService, NotificationService } from "services";
-import moment from "moment";
+import { format, parse } from "date-fns";
 
 const IssuePeriodService = {
     async findAll(boardId, filter) {
         const params = {
-            startDate: moment(filter.startDate, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-            endDate: moment(filter.endDate, 'DD/MM/YYYY').format('YYYY-MM-DD')
+            startDate: format(parse(filter.startDate, 'dd/MM/yyyy', new Date()), 'yyyy-MM-dd'),
+            endDate: format(parse(filter.endDate, 'dd/MM/yyyy', new Date()), 'yyyy-MM-dd')
         };
 
         const { data } = await HttpService.get(`/boards/${boardId}/issue-periods`, { params });

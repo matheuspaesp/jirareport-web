@@ -1,4 +1,5 @@
 import React from "react";
+import { Routes, Route } from "react-router-dom";
 
 import { Footer, MenuAppBar, PrivateRoute } from "components";
 
@@ -16,29 +17,31 @@ import "./DashboardRouter.scss";
 export default () => <>
     <MenuAppBar/>
     <main className="dashboard__container">
-        <PrivateRoute exact path="/boards" component={ListBoard}/>
-        <PrivateRoute exact path="/boards/new" component={CreateBoard}/>
-        <PrivateRoute exact path="/boards/:boardId(\d+)/edit" component={EditBoard}/>
+        <Routes>
+            <Route path="/boards" element={<PrivateRoute component={ListBoard} />} />
+            <Route path="/boards/new" element={<PrivateRoute component={CreateBoard} />} />
+            <Route path="/boards/:boardId/edit" element={<PrivateRoute component={EditBoard} />} />
 
-        <PrivateRoute exact path="/boards/:boardId(\d+)/dynamic-field-configs" component={ListDynamicFieldConfigs}/>
+            <Route path="/boards/:boardId/dynamic-field-configs" element={<PrivateRoute component={ListDynamicFieldConfigs} />} />
 
-        <PrivateRoute exact path="/boards/:boardId(\d+)/lead-time-configs" component={ListLeadTimeConfigs}/>
-        <PrivateRoute exact path="/boards/:boardId(\d+)/lead-time-configs/new" component={CreateLeadTimeConfig}/>
-        <PrivateRoute exact path="/boards/:boardId(\d+)/lead-time-configs/:leadTimeConfigId(\d+)/edit" component={EditLeadTimeConfig}/>
+            <Route path="/boards/:boardId/lead-time-configs" element={<PrivateRoute component={ListLeadTimeConfigs} />} />
+            <Route path="/boards/:boardId/lead-time-configs/new" element={<PrivateRoute component={CreateLeadTimeConfig} />} />
+            <Route path="/boards/:boardId/lead-time-configs/:leadTimeConfigId/edit" element={<PrivateRoute component={EditLeadTimeConfig} />} />
 
-        <PrivateRoute exact path="/boards/:boardId(\d+)/holidays" component={ListHolidays}/>
-        <PrivateRoute exact path="/boards/:boardId(\d+)/holidays/new" component={CreateHoliday}/>
-        <PrivateRoute exact path="/boards/:boardId(\d+)/holidays/:holidayId(\d+)/edit" component={EditHoliday}/>
+            <Route path="/boards/:boardId/holidays" element={<PrivateRoute component={ListHolidays} />} />
+            <Route path="/boards/:boardId/holidays/new" element={<PrivateRoute component={CreateHoliday} />} />
+            <Route path="/boards/:boardId/holidays/:holidayId/edit" element={<PrivateRoute component={EditHoliday} />} />
 
-        <PrivateRoute exact path="/boards/:boardId(\d+)/issue-periods" component={ListIssuePeriods}/>
-        <PrivateRoute exact path="/boards/:boardId(\d+)/issue-periods/:issuePeriodId(\d+)" component={IssuePeriodDetail}/>
-        <PrivateRoute exact path="/boards/:boardId(\d+)/issue-periods/new" component={CreateIssuePeriod}/>
+            <Route path="/boards/:boardId/issue-periods" element={<PrivateRoute component={ListIssuePeriods} />} />
+            <Route path="/boards/:boardId/issue-periods/:issuePeriodId" element={<PrivateRoute component={IssuePeriodDetail} />} />
+            <Route path="/boards/:boardId/issue-periods/new" element={<PrivateRoute component={CreateIssuePeriod} />} />
 
-        <PrivateRoute exact path="/users/me/configs" component={EditUserConfig}/>
+            <Route path="/users/me/configs" element={<PrivateRoute component={EditUserConfig} />} />
 
-        <PrivateRoute exact path="/boards/:boardId(\d+)/issues" component={ListIssue}/>
+            <Route path="/boards/:boardId/issues" element={<PrivateRoute component={ListIssue} />} />
 
-        <PrivateRoute exact path="/boards/:boardId(\d+)/estimates" component={ListEstimateIssue}/>
+            <Route path="/boards/:boardId/estimates" element={<PrivateRoute component={ListEstimateIssue} />} />
+        </Routes>
     </main>
     <Footer/>
 </>;

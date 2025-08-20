@@ -1,4 +1,5 @@
-import React, { Component } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -10,30 +11,39 @@ import { Button, Col, InputField, Panel, Row } from "components/ui";
 
 import "./Login.scss";
 
-class Login extends Component {
-    state = {
+function Login(props) {
+    const [state, setState] = useState({
         username: "",
         password: "",
         isLoading: false
-    };
+    });
 
-    componentDidMount() {
-        if (this.props.isLoggedIn) {
-            this.redirect();
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const redirect = useCallback(() => {
+        const { from } = location.state || { from: { pathname: "/boards" } };
+        navigate(from);
+    }, [location.state, navigate]);
+
+    useEffect(() => {
+        if (props.isLoggedIn) {
+            redirect();
         }
-    }
+    }, [props.isLoggedIn, redirect]);
 
-    handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        this.setState({
+        setState(prev => ({
+            ...prev,
             isLoading: true
-        });
+        }));
 
         try {
-            const response = await AuthService.login(this.state.username, this.state.password);
-            this.props.login(response.token, response.userConfig);
+            const response = await AuthService.login(state.username, state.password);
+            props.login(response.token, response.userConfig);
 
-            this.redirect();
+            redirect();
 
             NotificationService.notifySuccess("Login realizado com sucesso");
         } catch (e) {
@@ -46,61 +56,56 @@ class Login extends Component {
                 NotificationService.notifyError("Usuário e/ou senha inválido(s)");
             }
         } finally {
-            this.setState({
+            setState(prev => ({
+                ...prev,
                 isLoading: false
-            });
+            }));
         }
     };
 
-    redirect() {
-        const { from } = this.props.location.state || { from: { pathname: "/boards" } };
-        this.props.history.push(from);
-    }
-
-    handleChange = event => {
-        this.setState({
+    const handleChange = (event) => {
+        setState(prev => ({
+            ...prev,
             [event.target.name]: event.target.value
-        });
+        }));
     };
 
-    render() {
-        const { password, username, isLoading } = this.state;
+    const { password, username, isLoading } = state;
 
-        return <div className="container login__container">
-            <Row>
-                <Col s={12} l={6} offsetL={3}>
-                    <Panel loading={isLoading}>
-                        <div className="login-panel__header-container">
-                            <h4 className="login-panel__header center-align">Login</h4>
-                        </div>
+    return <div className="container login__container">
+        <Row>
+            <Col s={12} l={6} offsetL={3}>
+                <Panel loading={isLoading}>
+                    <div className="login-panel__header-container">
+                        <h4 className="login-panel__header center-align">Login</h4>
+                    </div>
 
-                        <Row>
-                            <InputField s={12}
-                                        name="username"
-                                        onChange={this.handleChange}
-                                        label="Usuário"
-                                        value={username}
-                            />
+                    <Row>
+                        <InputField s={12}
+                                    name="username"
+                                    onChange={handleChange}
+                                    label="Usuário"
+                                    value={username}
+                        />
 
-                            <InputField s={12}
-                                        type="password"
-                                        name="password"
-                                        onChange={this.handleChange}
-                                        label="Senha"
-                                        value={password}
-                            />
+                        <InputField s={12}
+                                    type="password"
+                                    name="password"
+                                    onChange={handleChange}
+                                    label="Senha"
+                                    value={password}
+                        />
 
-                            <Col s={12}>
-                                <Button type="submit" block onClick={this.handleSubmit}>
-                                    Entrar
-                                </Button>
-                            </Col>
-                        </Row>
-                    </Panel>
-                </Col>
-            </Row>
-        </div>;
-    }
+                        <Col s={12}>
+                            <Button type="submit" block onClick={handleSubmit}>
+                                Entrar
+                            </Button>
+                        </Col>
+                    </Row>
+                </Panel>
+            </Col>
+        </Row>
+    </div>;
 }
 
 const mapDispatchToProps = dispatch =>

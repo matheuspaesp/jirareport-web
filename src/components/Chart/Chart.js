@@ -1,6 +1,19 @@
 import React, { Component } from "react";
 
-import ChartJS from "chart.js";
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    BarController,
+    ArcElement,
+    DoughnutController,
+    PieController,
+    Title,
+    Tooltip,
+    Legend,
+} from "chart.js";
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import PropTypes from "prop-types";
 
 import { Panel } from "components/ui";
@@ -8,6 +21,21 @@ import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as classnames from "classnames";
 import validations from "validators/validations";
+
+// Registrar componentes do Chart.js v4
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    BarController,
+    ArcElement,
+    DoughnutController,
+    PieController,
+    Title,
+    Tooltip,
+    Legend,
+    ChartDataLabels
+);
 
 const fontSize = 16;
 const colors = [
@@ -27,10 +55,8 @@ class Chart extends Component {
     chartRef = React.createRef();
     state = {
         chart: {
-            toBase64Image: () => {
-            },
-            destroy: () => {
-            }
+            toBase64Image: () => "",
+            destroy: () => {}
         }
     };
 
@@ -54,7 +80,7 @@ class Chart extends Component {
     updateChart = () => {
         const { title, beginAtZero, stacked, multiAxis, chartType, data } = this.props;
 
-        if (!this.refs.chartRef) {
+        if (!this.chartRef.current) {
             return;
         }
 
@@ -95,7 +121,7 @@ class Chart extends Component {
             }
         });
 
-        const chart = new ChartJS(this.refs.chartRef.getContext("2d"), {
+        const chart = new ChartJS(this.chartRef.current.getContext("2d"), {
                 type: selectedChartType,
                 data: {
                     labels,
@@ -104,26 +130,32 @@ class Chart extends Component {
                 options: {
                     responsive: true,
                     scales: {
-                        yAxes: [{
+                        y: {
                             ticks: {
-                                fontSize,
+                                font: {
+                                    size: fontSize
+                                },
                                 beginAtZero
                             },
                             stacked
-                        }],
-                        xAxes: [{
+                        },
+                        x: {
                             ticks: {
-                                fontSize
+                                font: {
+                                    size: fontSize
+                                }
                             },
                             stacked
-                        }]
-                    },
-                    legend: {
-                        labels: {
-                            fontSize
                         }
                     },
                     plugins: {
+                        legend: {
+                            labels: {
+                                font: {
+                                    size: fontSize
+                                }
+                            }
+                        },
                         datalabels: {
                             color: "#FFF",
                             font: {
@@ -169,7 +201,7 @@ class Chart extends Component {
             })}>
                 <FontAwesomeIcon icon="download"/> Exportar
             </a>}>
-            <canvas ref={"chartRef"}/>
+            <canvas ref={this.chartRef}/>
             {children}
         </Panel>;
     }

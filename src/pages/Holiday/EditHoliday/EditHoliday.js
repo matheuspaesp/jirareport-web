@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import withRouter from "../../../utils/withRouter";
 
 import { HttpService, NotificationService } from "services";
 
@@ -91,4 +92,4 @@ class EditHoliday extends Component {
     }
 }
 
-export default EditHoliday;
+export default withRouter(EditHoliday);

@@ -12,7 +12,7 @@ import Row from "components/ui/Row/Row";
 import Select from "components/ui/Select/Select";
 import Table from "components/ui/Table/Table";
 import PagedTable from "components/ui/PagedTable/PagedTable";
-import Radio from "components/ui/Radio/Radio"
+import Radio from "components/ui/Radio/Radio";
 
 export {
     Button,

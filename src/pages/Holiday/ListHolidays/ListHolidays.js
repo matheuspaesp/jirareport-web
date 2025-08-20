@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import withRouter from "../../../utils/withRouter";
 
 import { AlertService, HttpService, NotificationService } from "services";
 import queryString from "query-string";
@@ -161,4 +162,4 @@ class ListHolidays extends Component {
     }
 }
 
-export default ListHolidays;
+export default withRouter(ListHolidays);

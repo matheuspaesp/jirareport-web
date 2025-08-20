@@ -2,30 +2,35 @@ import React, { Component } from "react";
 
 import PropTypes from "prop-types";
 import classnames from "classnames";
-import moment from "moment";
+import { format, parse } from "date-fns";
 
-import { SingleDatePicker } from "react-dates";
+import ReactDatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 import "./DatePicker.scss";
 
-const datePattern = "DD/MM/YYYY";
+const datePattern = "dd/MM/yyyy";
 
 class DatePicker extends Component {
     state = {
         focused: false,
-        date: this.props.value ? moment(this.props.value, datePattern) : null
+        date: this.props.value ? parse(this.props.value, datePattern, new Date()) : null
     };
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props.value && this.props.value !== prevProps.value) {
             this.setState({
-                date: this.props.value ? moment(this.props.value, datePattern) : null
+                date: this.props.value ? parse(this.props.value, datePattern, new Date()) : null
             });
         }
     }
 
-    handleFocus = ({ focused }) => {
-        this.setState({ focused });
+    handleFocus = () => {
+        this.setState({ focused: true });
+    };
+
+    handleBlur = () => {
+        this.setState({ focused: false });
     };
 
     handleDateChange = date => {
@@ -34,7 +39,7 @@ class DatePicker extends Component {
         });
 
         const { changeValue, name } = this.props;
-        changeValue(name, date ? date.format(datePattern) : "");
+        changeValue(name, date ? format(date, datePattern) : "");
     };
 
     render() {
@@ -42,19 +47,17 @@ class DatePicker extends Component {
         const { date, focused } = this.state;
 
         return <div className="input-field">
-            <SingleDatePicker hideKeyboardShortcutsPanel
-                              noBorder
-                              isOutsideRange={() => false}
-                              date={date}
-                              onDateChange={this.handleDateChange}
-                              focused={focused}
-                              onFocusChange={this.handleFocus}
-                              id={name}
-                              numberOfMonths={1}
-                              placeholder=""
-                              showDefaultInputIcon
-                              inputIconPosition="after"
-                              displayFormat={datePattern}/>
+            <ReactDatePicker
+                selected={date}
+                onChange={this.handleDateChange}
+                onFocus={this.handleFocus}
+                onBlur={this.handleBlur}
+                dateFormat={datePattern}
+                placeholderText=""
+                id={name}
+                className="browser-default"
+                showIcon
+            />
             <label htmlFor={name} className={classnames({
                 "active": Boolean(date),
                 "date-picker__label--focused": focused

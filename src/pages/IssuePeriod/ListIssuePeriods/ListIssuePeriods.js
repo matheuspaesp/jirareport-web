@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import withRouter from "../../../utils/withRouter";
 
 import { AlertService, BoardService, IssuePeriodService } from "services";
 import moment from "moment";
@@ -284,4 +285,4 @@ class ListIssuePeriods extends Component {
     }
 }
 
-export default ListIssuePeriods;
+export default withRouter(ListIssuePeriods);

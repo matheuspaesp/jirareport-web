@@ -54,4 +54,4 @@ const Table = ({ data, rows, actions, emptyMessage }) => {
     </table>;
 };
 
-export default Table
+export default Table;

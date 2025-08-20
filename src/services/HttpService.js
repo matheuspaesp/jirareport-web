@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import * as querystring from "query-string";
+import querystring from "query-string";
 import { AlertService, NotificationService } from "services";
 
 import store from "stores/store";

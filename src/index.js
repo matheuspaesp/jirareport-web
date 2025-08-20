@@ -1,9 +1,9 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 
 import "./index.scss";
 
-import "config";
+import "./config";
 
 import { Provider } from "react-redux";
 import store from "./stores/store";
@@ -14,9 +14,9 @@ import ReactModal from "react-modal";
 let element = document.getElementById("root");
 ReactModal.setAppElement(element);
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(element);
+root.render(
     <Provider store={store}>
         <Router/>
-    </Provider>,
-    element
+    </Provider>
 );

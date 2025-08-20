@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import withRouter from "../../../utils/withRouter";
 
 import { HttpService, NotificationService } from "services";
 import moment from "moment";
@@ -178,4 +179,4 @@ class ListEstimateIssue extends Component {
 }
 
 
-export default ListEstimateIssue;
+export default withRouter(ListEstimateIssue);

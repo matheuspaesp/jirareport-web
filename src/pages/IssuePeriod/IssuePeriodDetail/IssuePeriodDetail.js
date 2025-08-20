@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from "react";
+import withRouter from "../../../utils/withRouter";
 
 import { HttpService } from "services";
 
@@ -332,4 +333,4 @@ class IssuePeriodDetail extends Component {
     }
 }
 
-export default IssuePeriodDetail;
+export default withRouter(IssuePeriodDetail);

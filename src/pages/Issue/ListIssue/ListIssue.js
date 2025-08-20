@@ -1,7 +1,8 @@
 import React, { Component, Fragment } from "react";
+import withRouter from "../../../utils/withRouter";
 
 import { HttpService, NotificationService } from "services";
-import moment from "moment/moment";
+import { format, parse, startOfMonth, endOfMonth, subMonths } from "date-fns";
 
 import {
     ColumnTimeAverageTable,
@@ -17,7 +18,7 @@ import {
 } from "components";
 import { Col, Panel, Row } from "components/ui";
 import ListIssueFilters from "pages/Issue/ListIssue/ListIssueFilters/ListIssueFilters";
-import queryString from "query-string/index";
+import queryString from "query-string";
 import IssueFilterValidator from "validators/IssueFilterValidator";
 
 class ListIssue extends Component {
@@ -65,8 +66,8 @@ class ListIssue extends Component {
         },
         filterKeys: [],
         issueFilter: {
-            startDate: moment().subtract(3, 'months').startOf("month").format("DD/MM/YYYY"),
-            endDate: moment().endOf("month").format("DD/MM/YYYY")
+            startDate: format(startOfMonth(subMonths(new Date(), 3)), "dd/MM/yyyy"),
+            endDate: format(endOfMonth(new Date()), "dd/MM/yyyy")
         },
         sortOptions: {
             field: "key",
@@ -113,8 +114,8 @@ class ListIssue extends Component {
     retrieveFilterKeys = async (boardId, issueFilter) => {
         const query = {
             ...issueFilter,
-            startDate: moment(issueFilter.startDate, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-            endDate: moment(issueFilter.endDate, 'DD/MM/YYYY').format('YYYY-MM-DD')
+            startDate: format(parse(issueFilter.startDate, 'dd/MM/yyyy', new Date()), 'yyyy-MM-dd'),
+            endDate: format(parse(issueFilter.endDate, 'dd/MM/yyyy', new Date()), 'yyyy-MM-dd')
         };
 
         const { data } = await HttpService.get(`/boards/${boardId}/issues/filters/keys`, { params: query });
@@ -153,8 +154,8 @@ class ListIssue extends Component {
 
         const query = {
             ...issueFilter,
-            startDate: moment(issueFilter.startDate, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-            endDate: moment(issueFilter.endDate, 'DD/MM/YYYY').format('YYYY-MM-DD')
+            startDate: format(parse(issueFilter.startDate, 'dd/MM/yyyy', new Date()), 'yyyy-MM-dd'),
+            endDate: format(parse(issueFilter.endDate, 'dd/MM/yyyy', new Date()), 'yyyy-MM-dd')
         };
 
         try {
@@ -476,4 +477,4 @@ class ListIssue extends Component {
     }
 }
 
-export default ListIssue;
+export default withRouter(ListIssue);

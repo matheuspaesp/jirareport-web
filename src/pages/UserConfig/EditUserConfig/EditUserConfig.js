@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import withRouter from "../../../utils/withRouter";
 
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import withRouter from "../../../utils/withRouter";
 
 import { AlertService, HttpService, NotificationService } from "services";
 
@@ -166,4 +167,4 @@ class ListDynamicFieldConfigs extends Component {
     }
 }
 
-export default ListDynamicFieldConfigs;
+export default withRouter(ListDynamicFieldConfigs);
